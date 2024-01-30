@@ -34,6 +34,8 @@ public class MergeSort {
 
         // Once you get the single-threaded version to work, it's time to 
         // implement the concurrent version. Good luck :)
+
+        // Print the sorted array
         System.out.println("Sorted");
         for (int i = 0; i < array_size; i++) {     
             System.out.print(array[i] + " ");
