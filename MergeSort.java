@@ -34,8 +34,9 @@ public class MergeSort {
 
         // Once you get the single-threaded version to work, it's time to 
         // implement the concurrent version. Good luck :)
-        for (int i = 0; i < array_size; i++) {
-            System.out.println(array[i]);
+        System.out.println("Sorted");
+        for (int i = 0; i < array_size; i++) {     
+            System.out.print(array[i] + " ");
         }
         scanner.close();
     }
@@ -91,6 +92,7 @@ public class MergeSort {
     e     : int         - end index (inclusive) of merge
     */
     public static void merge(int[] array, int s, int e) {
+        int leftDone = 0, rightDone = 0;
         int m = s + (e - s) / 2;
         int[] left = new int[m - s + 1];
         int[] right = new int[e - m];
@@ -105,11 +107,17 @@ public class MergeSort {
         l_ptr = r_ptr = 0;
 
         for(int i = s; i <= e; i++) {
-            if(r_ptr == e - m || left[l_ptr] <= right[r_ptr]) {
+            if(leftDone == 0 && (r_ptr == e - m || left[l_ptr] <= right[r_ptr])) {
                 array[i] = left[l_ptr];
+                if (l_ptr + 1 == left.length) {
+                    leftDone = 1;
+                }
                 l_ptr++;
             } else {
                 array[i] = right[r_ptr];
+                if (r_ptr + 1 == right.length) {
+                    rightDone = 1;
+                }
                 r_ptr++;
             }
         }
