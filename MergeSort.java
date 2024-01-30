@@ -1,22 +1,43 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 public class MergeSort {
     public static void main(String[] args) {
-        // TODO: Seed your randomizer
+        Scanner scanner = new Scanner(System.in);
+        // Seed your randomizer
+        Random rand = new Random(0);
 
-        // TODO: Get array size and thread count from user
+        // Get array size and thread count from user
+        System.out.print("Enter Array Size: ");
+        int array_size = scanner.nextInt();
+        System.out.print("Enter the number of threads: ");
+        int thread_count = scanner.nextInt();
+        // Generate a random array of given size
 
-        // TODO: Generate a random array of given size
+        int[] array = new int[array_size];
+        for (int i = 0; i < array_size; i++) {
+            array[i] = rand.nextInt(array_size);
+            System.out.println(array[i]);
+        }
 
-        // TODO: Call the generate_intervals method to generate the merge 
-        // sequence
+        // Call the generate_intervals method to generate the merge sequence
 
-        // TODO: Call merge on each interval in sequence
+        List<Interval> intervals = generate_intervals(0, array_size - 1);
+
+        // Call merge on each interval in sequence
+
+        for (int i = 0; i < intervals.size(); i++) {
+            merge(array, intervals.get(i).getStart(), intervals.get(i).getEnd());
+        }
 
         // Once you get the single-threaded version to work, it's time to 
         // implement the concurrent version. Good luck :)
-
+        for (int i = 0; i < array_size; i++) {
+            System.out.println(array[i]);
+        }
+        scanner.close();
     }
 
     /*
