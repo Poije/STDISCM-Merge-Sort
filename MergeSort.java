@@ -14,7 +14,6 @@ public class MergeSort {
         int array_size = scanner.nextInt();
         System.out.print("Enter the number of threads: ");
         int thread_count = scanner.nextInt();
-        
         // Generate a random array of given size
 
         /*int[] array = new int[array_size];
@@ -33,8 +32,14 @@ public class MergeSort {
             int temp = array[randomIndexToSwap];
             array[randomIndexToSwap] = array[i];
             array[i] = temp;
-            System.out.println(array[i]);
         }
+
+        // Print the shuffled array for debugging
+        System.out.println("Shuffled Array:");
+        for (int i = 0; i < array_size; i++) {
+            System.out.print(array[i] + " ");
+        }
+        System.out.println(); 
 
         // Call the generate_intervals method to generate the merge sequence
 
