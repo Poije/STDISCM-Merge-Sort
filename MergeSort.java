@@ -2,10 +2,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+
 
 public class MergeSort {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
         // Seed your randomizer
         Random rand = new Random(0);
 
@@ -14,14 +21,8 @@ public class MergeSort {
         int array_size = scanner.nextInt();
         System.out.print("Enter the number of threads: ");
         int thread_count = scanner.nextInt();
+
         // Generate a random array of given size
-
-        /*int[] array = new int[array_size];
-        for (int i = 0; i < array_size; i++) {
-            array[i] = rand.nextInt(array_size);
-            System.out.println(array[i]);
-        }*/
-
         int[] array = new int[array_size];
         for (int i = 0; i < array_size; i++) {
             array[i] = i + 1;
@@ -34,31 +35,71 @@ public class MergeSort {
             array[i] = temp;
         }
 
+        // COMMENT OUT WHEN BENCHMARKING
         // Print the shuffled array for debugging
-        System.out.println("Shuffled Array:");
-        for (int i = 0; i < array_size; i++) {
-            System.out.print(array[i] + " ");
-        }
-        System.out.println(); 
+        // System.out.println("Shuffled Array:");
+        // for (int i = 0; i < array_size; i++) {
+        //     System.out.print(array[i] + " ");
+        // }
+        // System.out.println(); 
 
         // Call the generate_intervals method to generate the merge sequence
-
         List<Interval> intervals = generate_intervals(0, array_size - 1);
 
-        // Call merge on each interval in sequence
+        long startTime = System.nanoTime();
 
+        // START SINGLE THREADED
+        // Call merge on each interval in sequence
         for (int i = 0; i < intervals.size(); i++) {
             merge(array, intervals.get(i).getStart(), intervals.get(i).getEnd());
         }
+        // END SINGLE THREADED
 
         // Once you get the single-threaded version to work, it's time to 
         // implement the concurrent version. Good luck :)
 
+        // START MULTI THREADED
+        // ExecutorService executor = Executors.newFixedThreadPool(thread_count);
+
+        // List<Future<?>> futures = new ArrayList<>();
+        // for (Interval interval : intervals) {
+        //     Future<?> future = executor.submit(new Callable<Void>() {
+        //         public Void call() throws Exception {
+        //             merge(array, interval.getStart(), interval.getEnd());
+        //             return null;
+        //         }
+        //     });
+        //     futures.add(future);
+        // }
+
+        // for (Future<?> future : futures) {
+        //     try {
+        //         future.get();
+        //     } catch (InterruptedException e) {
+        //         Thread.currentThread().interrupt(); 
+        //         System.err.println("Thread was interrupted: " + e.getMessage());
+        //     } catch (ExecutionException e) {
+        //         System.err.println("Task execution failed: " + e.getMessage());
+        //     }
+        // }
+        
+        // executor.shutdown();
+        // END MULTI THREADED
+
+        long endTime = System.nanoTime();
+        long elapsedTimeNanos = endTime - startTime;
+        double elapsedTimeMillis = elapsedTimeNanos / 1_000_000.0;
+
+        // COMMENT OUT WHEN BENCHMARKING
         // Print the sorted array
-        System.out.println("Sorted");
-        for (int i = 0; i < array_size; i++) {     
-            System.out.print(array[i] + " ");
-        }
+        // System.out.println("\nSorted:");
+        // for (int i = 0; i < array_size; i++) {     
+        //     System.out.print(array[i] + " ");
+        // }
+        // System.out.println(); 
+
+        System.out.println("\nRuntime: " + elapsedTimeMillis + " milliseconds");
+
         scanner.close();
     }
 
