@@ -14,11 +14,25 @@ public class MergeSort {
         int array_size = scanner.nextInt();
         System.out.print("Enter the number of threads: ");
         int thread_count = scanner.nextInt();
+        
         // Generate a random array of given size
+
+        /*int[] array = new int[array_size];
+        for (int i = 0; i < array_size; i++) {
+            array[i] = rand.nextInt(array_size);
+            System.out.println(array[i]);
+        }*/
 
         int[] array = new int[array_size];
         for (int i = 0; i < array_size; i++) {
-            array[i] = rand.nextInt(array_size);
+            array[i] = i + 1;
+        }
+
+        for (int i = 0; i < array_size; i++) {
+            int randomIndexToSwap = rand.nextInt(array_size);
+            int temp = array[randomIndexToSwap];
+            array[randomIndexToSwap] = array[i];
+            array[i] = temp;
             System.out.println(array[i]);
         }
 
