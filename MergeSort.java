@@ -84,7 +84,6 @@ public class MergeSort {
                 System.err.println("Thread was interrupted during sorting: " + e.getMessage());
             }
         
-            // Step 2: Merge sorted subarrays
             int currentSize = subArraySize;
             while (currentSize < array_size) {
                 List<Callable<Void>> mergeTasks = new ArrayList<>();
