@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -63,34 +64,54 @@ public class MergeSort {
 
         else {
             // START MULTI THREADED
-        
             ExecutorService executor = Executors.newFixedThreadPool(thread_count);
-
-            List<Future<?>> futures = new ArrayList<>();
-            for (Interval interval : intervals) {
-                Future<?> future = executor.submit(new Callable<Void>() {
-                    public Void call() throws Exception {
-                        merge(array, interval.getStart(), interval.getEnd());
-                        return null;
-                    }
+            List<Callable<Void>> sortTasks = new ArrayList<>();
+            int subArraySize = (int) Math.ceil(array_size / (double) thread_count);
+            
+            for (int i = 0; i < thread_count; i++) {
+                final int start = i * subArraySize;
+                final int end = Math.min((i + 1) * subArraySize, array_size); 
+                sortTasks.add(() -> {
+                    Arrays.sort(array, start, end);
+                    return null;
                 });
-                futures.add(future);
-            }
-
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); 
-                    System.err.println("Thread was interrupted: " + e.getMessage());
-                } catch (ExecutionException e) {
-                    System.err.println("Task execution failed: " + e.getMessage());
-                }
             }
         
-            executor.shutdown(); 
-        // END MULTI THREADED
-        }
+            try {
+                executor.invokeAll(sortTasks); 
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Thread was interrupted during sorting: " + e.getMessage());
+            }
+        
+            // Step 2: Merge sorted subarrays
+            int currentSize = subArraySize;
+            while (currentSize < array_size) {
+                List<Callable<Void>> mergeTasks = new ArrayList<>();
+                for (int i = 0; i < array_size; i += 2 * currentSize) {
+                    final int start = i;
+                    final int mid = Math.min(i + currentSize, array_size);
+                    final int end = Math.min(i + 2 * currentSize, array_size);
+        
+                    mergeTasks.add(() -> {
+                        merge(array, start, end - 1);
+                        return null;
+                    });
+                }
+        
+                try {
+                    executor.invokeAll(mergeTasks); 
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("Thread was interrupted during merging: " + e.getMessage());
+                }
+        
+                currentSize *= 2;
+            }
+        
+            executor.shutdown();
+            // END MULTI THREADED
+        }        
         
         long endTime = System.nanoTime();
         long elapsedTimeNanos = endTime - startTime;
@@ -103,6 +124,12 @@ public class MergeSort {
              System.out.print(array[i] + " ");
          }
          System.out.println(); 
+
+         if (!isSorted(array)) {
+            System.out.println("\nThe array is not sorted properly.");
+         } else {
+            System.out.println("\nThe array is sorted properly.");
+         }
 
         System.out.println("\nRuntime: " + elapsedTimeMillis + " milliseconds");
 
@@ -189,6 +216,15 @@ public class MergeSort {
                 r_ptr++;
             }
         }
+    }
+
+    public static boolean isSorted(int[] array) {
+        for (int i = 0; i < array.length - 1; i++) {
+            if (array[i] > array[i + 1]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
