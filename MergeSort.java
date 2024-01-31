@@ -35,68 +35,74 @@ public class MergeSort {
             array[i] = temp;
         }
 
-        // COMMENT OUT WHEN BENCHMARKING
+        
         // Print the shuffled array for debugging
-        // System.out.println("Shuffled Array:");
-        // for (int i = 0; i < array_size; i++) {
-        //     System.out.print(array[i] + " ");
-        // }
-        // System.out.println(); 
+        // COMMENT OUT WHEN BENCHMARKING
+         System.out.println("Shuffled Array:");
+         for (int i = 0; i < array_size; i++) {
+             System.out.print(array[i] + " ");
+         }
+         System.out.println(); 
 
         // Call the generate_intervals method to generate the merge sequence
         List<Interval> intervals = generate_intervals(0, array_size - 1);
 
         long startTime = System.nanoTime();
-
-        // START SINGLE THREADED
-        // Call merge on each interval in sequence
-        for (int i = 0; i < intervals.size(); i++) {
-            merge(array, intervals.get(i).getStart(), intervals.get(i).getEnd());
+        
+        if (thread_count == 1){
+            // START SINGLE THREADED
+            // Call merge on each interval in sequence
+            for (int i = 0; i < intervals.size(); i++) {
+                merge(array, intervals.get(i).getStart(), intervals.get(i).getEnd());
+            }
+            // END SINGLE THREADED
         }
-        // END SINGLE THREADED
 
         // Once you get the single-threaded version to work, it's time to 
         // implement the concurrent version. Good luck :)
 
-        // START MULTI THREADED
-        // ExecutorService executor = Executors.newFixedThreadPool(thread_count);
-
-        // List<Future<?>> futures = new ArrayList<>();
-        // for (Interval interval : intervals) {
-        //     Future<?> future = executor.submit(new Callable<Void>() {
-        //         public Void call() throws Exception {
-        //             merge(array, interval.getStart(), interval.getEnd());
-        //             return null;
-        //         }
-        //     });
-        //     futures.add(future);
-        // }
-
-        // for (Future<?> future : futures) {
-        //     try {
-        //         future.get();
-        //     } catch (InterruptedException e) {
-        //         Thread.currentThread().interrupt(); 
-        //         System.err.println("Thread was interrupted: " + e.getMessage());
-        //     } catch (ExecutionException e) {
-        //         System.err.println("Task execution failed: " + e.getMessage());
-        //     }
-        // }
+        else {
+            // START MULTI THREADED
         
-        // executor.shutdown();
-        // END MULTI THREADED
+            ExecutorService executor = Executors.newFixedThreadPool(thread_count);
 
+            List<Future<?>> futures = new ArrayList<>();
+            for (Interval interval : intervals) {
+                Future<?> future = executor.submit(new Callable<Void>() {
+                    public Void call() throws Exception {
+                        merge(array, interval.getStart(), interval.getEnd());
+                        return null;
+                    }
+                });
+                futures.add(future);
+            }
+
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); 
+                    System.err.println("Thread was interrupted: " + e.getMessage());
+                } catch (ExecutionException e) {
+                    System.err.println("Task execution failed: " + e.getMessage());
+                }
+            }
+        
+            executor.shutdown(); 
+        // END MULTI THREADED
+        }
+        
         long endTime = System.nanoTime();
         long elapsedTimeNanos = endTime - startTime;
         double elapsedTimeMillis = elapsedTimeNanos / 1_000_000.0;
 
         // COMMENT OUT WHEN BENCHMARKING
         // Print the sorted array
-        // System.out.println("\nSorted:");
-        // for (int i = 0; i < array_size; i++) {     
-        //     System.out.print(array[i] + " ");
-        // }
-        // System.out.println(); 
+         System.out.println("\nSorted:");
+         for (int i = 0; i < array_size; i++) {     
+             System.out.print(array[i] + " ");
+         }
+         System.out.println(); 
 
         System.out.println("\nRuntime: " + elapsedTimeMillis + " milliseconds");
 
