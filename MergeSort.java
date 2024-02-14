@@ -39,12 +39,12 @@ public class MergeSort {
         
         // Print the shuffled array for debugging
         // COMMENT OUT WHEN BENCHMARKING
-         System.out.println("Shuffled Array:");
+        /* System.out.println("Shuffled Array:");
          for (int i = 0; i < array_size; i++) {
              System.out.print(array[i] + " ");
          }
          System.out.println(); 
-
+        */
         // Call the generate_intervals method to generate the merge sequence
         List<Interval> intervals = generate_intervals(0, array_size - 1);
 
@@ -118,18 +118,17 @@ public class MergeSort {
 
         // COMMENT OUT WHEN BENCHMARKING
         // Print the sorted array
-         System.out.println("\nSorted:");
+        /* System.out.println("\nSorted:");
          for (int i = 0; i < array_size; i++) {     
              System.out.print(array[i] + " ");
          }
          System.out.println(); 
-
+         */
          if (!isSorted(array)) {
             System.out.println("\nThe array is not sorted properly.");
          } else {
             System.out.println("\nThe array is sorted properly.");
          }
-
         System.out.println("\nRuntime: " + elapsedTimeMillis + " milliseconds");
 
         scanner.close();
